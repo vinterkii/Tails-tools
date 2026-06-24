@@ -1,14 +1,13 @@
 #!/bin/bash
+# Wallpaper changer script for tailsOS made by vinterkii --> https://github.com/vinterkii
 
 # Colors For Using in The echo Commands
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-ORANGE='\033[0;33m'
 GRAY='\033[0;37m'
-CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 
+# Change This Value to change the Wallpaper Directory
 DIR_WALLPAPERS="/live/persistence/TailsData_unlocked/dotfiles/Wallpapers"
 
 # The Final Function set the first passed file path as the desktop wallpaper
@@ -18,7 +17,7 @@ set_wallpaper() {
   # Check if file exists (Paranoia)
   if [[ ! -s "${FILE}" ]]; then
     echo -e "${RED} File is Empty or Deleted. ${GRAY}"
-    read -p "Press Any Key to Retry..."
+    read -rp "Press Any Key to Retry..."
     clear
     exec "$0" "$@" # Restarts the script apparently
   else # these three lines are the final goal of this entire script... >:(
@@ -42,7 +41,7 @@ choose_wallpaper() {
   # Asks The User To Choose a Wallpaper
   echo -e "Please Choose a Wallpaper ${YELLOW}[${GREEN}1-${COUNT}${YELLOW}]${GRAY}"
   echo -e "${YELLOW}"
-  read -p " >>> " NUM
+  read -rp " >>> " NUM
   echo -e "${GRAY}"
   
   # validate NUM
@@ -52,7 +51,7 @@ choose_wallpaper() {
     exit
   else
     WALLPAPER="${WALLPAPERS[$((NUM-1))]}"
-    confirm $WALLPAPER
+    confirm "$WALLPAPER"
   fi
 }
 
@@ -63,7 +62,7 @@ confirm() {
   
   xdg-open "$SELECT"
   
-  read -p "Are You Sure You Want to Apply (y/n)?" ACTION
+  read -pr "Are You Sure You Want to Apply (y/n)?" ACTION
   case "$ACTION" in 
     y|Y|yes|"")
       set_wallpaper "$SELECT"
@@ -80,11 +79,12 @@ confirm() {
 
 # Check if the wallpaper directory exists
 if [[ ! -d "${DIR_WALLPAPERS}" ]];then 
-  mkdir "${DIR_WALLPAPERS}"
+  mkdir -p "${DIR_WALLPAPERS}"
   echo -e "${RED}No Wallpaper Directory is Found${GRAY}"
   echo -e "The Directory has been created at ${YELLOW}${DIR_WALLPAPERS}${GRAY}"
   exit
 else
+  # puts all the files in and array named "WALLPAPERS" 
   mapfile -t WALLPAPERS < <(find "$DIR_WALLPAPERS" -maxdepth 1 -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.gif' \))
   choose_wallpaper
 fi
