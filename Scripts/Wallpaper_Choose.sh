@@ -62,7 +62,7 @@ confirm() {
   
   xdg-open "$SELECT"
   
-  read -pr "Are You Sure You Want to Apply (y/n)?" ACTION
+  read -rp "Are You Sure You Want to Apply (y/n)?" ACTION
   case "$ACTION" in 
     y|Y|yes|"")
       set_wallpaper "$SELECT"
