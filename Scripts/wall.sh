@@ -1,11 +1,12 @@
 
 #!/bin/bash
 # a Wallpaper changer script 
+
 # Colors For Using in The echo Commands
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-GRAY='\033[0m'
 YELLOW='\033[1;33m'
+RESET='\033[0m'
 
 # Change This Value to change the Wallpaper Directory
 DIR_WALLPAPERS="/live/persistence/TailsData_unlocked/dotfiles/Wallpapers"
@@ -16,18 +17,17 @@ set_wallpaper() {
   
   # Check if file exists (Paranoia)
   if [[ ! -s "${FILE}" ]]; then
-    echo -e "${RED} File is Empty or Deleted. ${GRAY}"
+    echo -e "${RED} File is Empty or Deleted. ${RESET}"
     read -rp "Press Any Key to Retry..."
     clear
     exec "$0" "$@" # Restarts the script apparently
   else # these three lines are the final goal of this entire script... >:(
-    gsettings set org.gnome.desktop.screensaver picture-uri "file://${FILE}" && echo -e "${GREEN} Lock Screen Wallpaper. ${GRAY}"
-    gsettings set org.gnome.desktop.background picture-uri "file://${FILE}" && echo -e "${GREEN} Set Light Wallpaper. ${GRAY}"
-    gsettings set org.gnome.desktop.background picture-uri-dark "file://${FILE}" && echo -e "${GREEN} Set Dark Wallpaper. ${GRAY}"
+    gsettings set org.gnome.desktop.screensaver picture-uri "file://${FILE}" && echo -e "${GREEN} Set Lock Screen Wallpaper. ${RESET}"
+    gsettings set org.gnome.desktop.background picture-uri "file://${FILE}" && echo -e "${GREEN} Set Light Wallpaper. ${RESET}"
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://${FILE}" && echo -e "${GREEN} Set Dark Wallpaper. ${RESET}"
     exit 
   fi
 }
-
 
 choose_wallpaper() {
   local NUM
@@ -35,18 +35,18 @@ choose_wallpaper() {
   
   # Write all the available wallpapers
   for i in "${!WALLPAPERS[@]}"; do
-    echo -e "${YELLOW}[${GREEN}$((i+1))${YELLOW}] ${GRAY} ${WALLPAPERS[i]#"$DIR_WALLPAPERS"}"
+    echo -e "${YELLOW}[${GREEN}$((i+1))${YELLOW}] ${RESET} ${WALLPAPERS[i]#"$DIR_WALLPAPERS"}"
   done
   
   # Asks The User To Choose a Wallpaper
-  echo -e "Please Choose a Wallpaper ${YELLOW}[${GREEN}1-${COUNT}${YELLOW}]${GRAY}"
+  echo -e "Please Choose a Wallpaper ${YELLOW}[${GREEN}1-${COUNT}${YELLOW}]${RESET}"
   echo -e "${YELLOW}"
   read -rp " >>> " NUM
-  echo -e "${GRAY}"
+  echo -e "${RESET}"
   
   # validate NUM
   if ! [[ "$NUM" =~ ^[0-9]+$ && "$NUM" < "(($COUNT+1))" ]]; then
-    echo -e "${RED}Please enter a valid number.${GRAY}"
+    echo -e "${RED}Please enter a valid number.${RESET}"
     choose_wallpaper
     exit
   else
@@ -54,7 +54,6 @@ choose_wallpaper() {
     confirm "$WALLPAPER"
   fi
 }
-
 
 # Confirm Wallpaper choice
 confirm() {
@@ -74,18 +73,15 @@ confirm() {
   esac
 }
 
-
-# The actual part that runs first when executing the script
-
 # Check if the wallpaper directory exists
 if [[ ! -d "${DIR_WALLPAPERS}" ]];then 
   # And Creates it if it doesn't exist
   mkdir -p "${DIR_WALLPAPERS}"
-  echo -e "${RED}No Wallpaper Directory is Found${GRAY}" 
-  echo -e "The Directory has been created at ${YELLOW}${DIR_WALLPAPERS}${GRAY}" 
+  echo -e "${RED}No Wallpaper Directory is Found${RESET}" 
+  echo -e "The Directory has been created at ${YELLOW}${DIR_WALLPAPERS}${RESET}" 
   exit
 else
-  # Or puts all the files in and array named "WALLPAPERS" 
+  # Or puts all the files in directory in an array named "WALLPAPERS" 
   mapfile -t WALLPAPERS < <(find "$DIR_WALLPAPERS" -maxdepth 1 -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.gif' \))
   choose_wallpaper
 fi
