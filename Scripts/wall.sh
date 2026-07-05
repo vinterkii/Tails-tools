@@ -1,8 +1,7 @@
-
 #!/bin/bash
 # a Wallpaper changer script 
 
-# Colors For Using in The echo Commands
+# ANSI Colors Codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
