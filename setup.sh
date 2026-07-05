@@ -20,9 +20,9 @@ case $SHELL in
     */fish)  SHELL_CONFIG='$HOME/.config/fish/config.fish' ;;
     */dash)   SHELL_CONFIG='$HOME/.profile' ;;
     *) 
-        echo -e "${RED} Sorry Your Shell is not supported yet..." 
-        echo -e "$Please Use (Bash, Zsh, Fish or dash)${RESET}" 
-        read -pr "Press Any Key..." dump
+        echo -e "${RED} Sorry Your Shell is not supported yet...${RESET}" 
+        echo -e "${YELLOW} Please Use (Bash, Zsh, Fish or dash)${RESET}" 
+        read -pr "Press Any Key..."
         exit ;;
 esac
 
@@ -50,7 +50,6 @@ EOF
 reinstall() {
     echo "WIP"
     refresh
-    exit
 }
 
 refresh() {
@@ -61,7 +60,6 @@ refresh() {
         */dash)  . $HOME/.profile ;;
         *) echo -e "${RED} Sorry Your Shell is not supported yet... Please Use (Bash, Zsh, Fish or dash)${RESET}" ;;
     esac
-    exit
 }
 
 # Check if the setup has run before
@@ -79,7 +77,7 @@ if grep -q "# Tails-tools setup MlVkT0a3" $SHELL_CONFIG ; then
     esac
 else
     echo -e "The script will modify your ${SHELL_CONFIG}"
-    read -rp "..." dump
+    read -rp "..." 
     echo -e "The script will add these aliases:"
     echo "${ORANGE}wall ${GRAY}# This is the Wallpaper Changer for Gnome"
     # add more aliases as you add more scripts  
@@ -90,3 +88,48 @@ else
         n|N|No|*) exit ;;
     esac
 fi
+
+# This will only run on tails Devices 
+# ask wether to move the current Shell Config and backups to the dotfiles directory 
+if grep -qi 'tails' /etc/os-release; then
+
+  dest="/live/persistence/TailsData_unlocked/dotfiles/${SHELL_CONFIG#'/home/amnesia/'}"
+
+  if [[ ! -f "$dest" ]]; then
+    echo -e "${PURPLE}TailsOS: ${RESET}Your ${SHELL_CONFIG#'/home/amnesia/'} and it's backups will be reset if you restart your computer."
+    check_dotfiles_tails() {
+        if [[ ! -e "/live/persistence/TailsData_unlocked/dotfiles" ]] ; then
+            echo -e "${RED} dotfiles feature can't be accessed"
+            echo -e "${YELLOW} Please Enable it in the Persistent Storage App"
+            read -p "Press Any key to Retry..."
+            check_dotfiles_tails 
+        else
+            return
+        fi
+    }
+
+    check_dotfiles_tails
+    
+    read -rp "Would you like to move it into persistent storage? (y/n):" ACTION
+
+    case "$ACTION" in
+      y|Y|yes|"")
+        cp "$SHELL_CONFIG" "$dest"
+
+        mkdir -p "/live/persistence/TailsData_unlocked/dotfiles/Backup/Shell_Config"
+        cp -r "$HOME/Backup/Shell_Config" "/live/persistence/TailsData_unlocked/dotfiles/Backup/Shell_Config"
+
+        echo -e "${GREEN}Done. ${RESET} Your ${SHELL_CONFIG} is now Persistent"
+        exit
+        ;;
+      *)
+        exit
+        ;;
+    esac
+  else
+    exit
+  fi
+fi
+
+
+
