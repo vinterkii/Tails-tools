@@ -4,6 +4,7 @@
 # ANSI Color & Style
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 
 BOLD='\x1B[1m'
 ITALIC='\x1B[3m'
@@ -14,10 +15,10 @@ DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 # get the config file for the shell
 case $SHELL in 
-    */bash)  SHELL_CONFIG='~/.bashrc' ;;
-    */zsh)  SHELL_CONFIG='~/.zshrc' ;;
-    */fish)  SHELL_CONFIG='~/.config/fish/config.fish' ;;
-    */dash)   SHELL_CONFIG='~/.profile' ;;
+    */bash)  SHELL_CONFIG="${HOME}/.bashrc" ;;
+    */zsh)  SHELL_CONFIG='$HOME/.zshrc' ;;
+    */fish)  SHELL_CONFIG='$HOME/.config/fish/config.fish' ;;
+    */dash)   SHELL_CONFIG='$HOME/.profile' ;;
     *) 
         echo -e "${RED} Sorry Your Shell is not supported yet..." 
         echo -e "$Please Use (Bash, Zsh, Fish or dash)${RESET}" 
@@ -31,7 +32,8 @@ install() {
 
     # Backups the Shell Config (e.g. .bashrc ...)
     mkdir -p "$HOME/Backup/Shell_Config"
-    cat "$SHELL_CONFIG" >> "$HOME/Backup/Shell_Config/${SHELL}_+${stamp}_Backup.txt"
+    cat "$SHELL_CONFIG" >> "$HOME/Backup/Shell_Config/${SHELL##/*/}_${date}_Backup.txt"
+    echo -e "${YELLOW}Your '${SHELL_CONFIG}' Have been backuped in to '$HOME/Backup/Shell_Config/${SHELL##/*/}_${date}_Backup.txt' ${RESET}"
 
     cat >> "$SHELL_CONFIG" <<EOF
 # Tails-tools setup MlVkT0a3
@@ -47,15 +49,16 @@ EOF
 
 reinstall() {
     echo "WIP"
+    refresh
     exit
 }
 
 refresh() {
     case "$SHELL" in
-        */bash) source ~/.bashrc ;;
-        */zsh) source ~/.zshrc ;;
-        */fish) source ~/.config/fish/config.fish ;;
-        */dash)  . ~/.profile ;;
+        */bash) source ${HOME}/.bashrc ;;
+        */zsh) source $HOME/.zshrc ;;
+        */fish) source $HOME/.config/fish/config.fish ;;
+        */dash)  . $HOME/.profile ;;
         *) echo -e "${RED} Sorry Your Shell is not supported yet... Please Use (Bash, Zsh, Fish or dash)${RESET}" ;;
     esac
     exit
@@ -71,7 +74,7 @@ if grep -q "# Tails-tools setup MlVkT0a3" $SHELL_CONFIG ; then
             reinstall ;;
         n|N|no|"")
             echo -e "Reinstall Canceled..."
-            echo -e "if you're Having Problems running the command try restartig your terminal"
+            echo -e "if you're Having Problems running the commands try restartig your terminal"
             refresh ;;
     esac
 else
