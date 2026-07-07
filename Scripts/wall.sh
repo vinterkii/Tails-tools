@@ -17,9 +17,7 @@ set_wallpaper() {
   # Check if file exists (Paranoia)
   if [[ ! -s "${FILE}" ]]; then
     echo -e "${RED} File is Empty or Deleted. ${RESET}"
-    read -rp "Press Any Key to Retry..."
-    clear
-    exec "$0" "$@" # Restarts the script apparently
+    exit
   else # these three lines are the final goal of this entire script... >:(
     gsettings set org.gnome.desktop.screensaver picture-uri "file://${FILE}" && echo -e "${GREEN} Set Lock Screen Wallpaper. ${RESET}"
     gsettings set org.gnome.desktop.background picture-uri "file://${FILE}" && echo -e "${GREEN} Set Light Wallpaper. ${RESET}"
@@ -78,6 +76,10 @@ if [[ ! -d "${DIR_WALLPAPERS}" ]];then
   mkdir -p "${DIR_WALLPAPERS}"
   echo -e "${RED}No Wallpaper Directory is Found${RESET}" 
   echo -e "The Directory has been created at ${YELLOW}${DIR_WALLPAPERS}${RESET}" 
+  exit
+elif [ -z "$(ls -1 "${DIR_WALLPAPERS}"/*.{png,jpg,jpeg,gif} 2>/dev/null)" ]; then
+  echo -e "${RED}No Wallpapers Found${RESET}"
+  echo -e "${YELLOW}Please copy your wallpapers to ${DIR_WALLPAPERS}${RESET}"
   exit
 else
   # Or puts all the files in directory in an array named "WALLPAPERS" 
