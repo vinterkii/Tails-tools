@@ -6,7 +6,7 @@ A collection of scripts and utilities that I use daily.
 # Tools
 Bellow is a list of all the tools available in this repo.
 
-## [wall.sh](https://github.com/vinterkii/Tails-tools/blob/main/setup.sh)
+## [wall.sh](https://github.com/vinterkii/Tails-tools/blob/main/Scripts/wall.sh)
 A Bash wallpaper changer for Gnome. It scans a wallpaper folder By Default `/live/persistence/TailsData_unlocked/dotfiles/Wallpapers`, lists all supported image files (PNG/JPG/JPEG/GIF), and prompts you to pick one. Then the script sets the selected image as the desktop wallpaper and the lock-screen wallpaper via `gsettings`.
 
 after [Installation](https://github.com/vinterkii/Tails-tools#installation) you can use this tool by typing the `wall` command in the terminal. 
