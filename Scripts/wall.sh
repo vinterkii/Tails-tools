@@ -56,8 +56,11 @@ choose_wallpaper() {
 confirm() {
   local SELECT="$1"
   
-  xdg-open "$SELECT"
-  
+  if which kitten ;then
+    kitten icat $SELECT
+  else
+    xdg-open "$SELECT"
+  fi
   read -rp "Are You Sure You Want to Apply (y/n)?" ACTION
   case "$ACTION" in 
     y|Y|yes|"")
